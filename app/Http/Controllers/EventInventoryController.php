@@ -92,7 +92,19 @@ class EventInventoryController extends Controller
 
     public function destroy(EventInventory $eventInventory)
     {
+        $itemName = $eventInventory->inventory->item_name ?? 'N/A';
+        $eventName = $eventInventory->event->event_name ?? 'N/A';
+        $quantity = $eventInventory->quantity_allocated;
+        $eventInventoryId = $eventInventory->id;
+
         $eventInventory->delete();
+
+        // ✅ Log activity
+        ActivityLogger::delete(
+            'EventInventory',
+            $eventInventoryId,
+            Auth::user()->full_name . ' removed allocation of "' . $itemName . '" from event "' . $eventName . '"'
+        );
 
         return redirect()->back()
             ->with('success', 'Inventory allocation removed successfully!');
