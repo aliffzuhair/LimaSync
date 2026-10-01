@@ -70,7 +70,11 @@
                         </td>
                         <td>
                             <div class="progress" style="width: 100px;">
-                                <div class="progress-bar" role="progressbar"
+                                <div class="progress-bar bg-{{ 
+                                    $event->progress_percentage == 100 ? 'success' : 
+                                    ($event->progress_percentage >= 50 ? 'warning' : 'danger') 
+                                    }}" 
+                                    role="progressbar" 
                                     style="width: {{ $event->progress_percentage }}%">
                                     {{ $event->progress_percentage }}%
                                 </div>

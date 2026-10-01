@@ -65,7 +65,7 @@
 <!-- Reports Table -->
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-file-alt"></i> Available Reports</h5>
+        <h5 class="mb-0" style="color: white"><i class="fas fa-file-alt"></i> Available Reports</h5>
     </div>
     <div class="card-body">
         @if($reports->count() > 0)
