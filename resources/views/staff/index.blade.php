@@ -9,7 +9,7 @@
         <p class="mb-4">Manage all user accounts in the system</p>
     </div>
     <a href="{{ route('staff.create') }}" class="btn btn-primary">
-        <i class="fas fa-user-plus"></i> Add Staff
+        <i class="fas fa-user-plus"></i> Add User
     </a>
 </div>
 
@@ -18,7 +18,7 @@
     <div class="col-md-3">
         <div class="card text-white bg-primary">
             <div class="card-body">
-                <h6 class="card-title">Total Staff</h6>
+                <h6 class="card-title">Total User</h6>
                 <h3 class="mb-0">{{ \App\Models\User::count() }}</h3>
             </div>
         </div>
@@ -26,7 +26,7 @@
     <div class="col-md-3">
         <div class="card text-white bg-success">
             <div class="card-body">
-                <h6 class="card-title">Active Staff</h6>
+                <h6 class="card-title">Active User</h6>
                 <h3 class="mb-0">{{ \App\Models\User::where('is_active', true)->count() }}</h3>
             </div>
         </div>
@@ -34,7 +34,7 @@
     <div class="col-md-3">
         <div class="card text-white bg-warning">
             <div class="card-body">
-                <h6 class="card-title">Inactive Staff</h6>
+                <h6 class="card-title">Inactive User</h6>
                 <h3 class="mb-0">{{ \App\Models\User::where('is_active', false)->count() }}</h3>
             </div>
         </div>
