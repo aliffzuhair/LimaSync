@@ -28,7 +28,7 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Event Information</h5>
+                <h5 class="mb-0" style="color: white">Event Information</h5>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">
@@ -146,7 +146,7 @@
         
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0">Quick Actions</h5>
+        <h5 class="mb-0" style="color: white">Quick Actions</h5>
     </div>
     <div class="card-body">
         <div class="d-grid gap-2">
@@ -191,7 +191,7 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <h5 class="mb-0">Event Summary</h5>
+                <h5 class="mb-0" style="color: white">Event Summary</h5>
             </div>
             <div class="card-body">
                 <ul class="list-unstyled">
@@ -208,7 +208,7 @@
 
 <div class="card mt-3">
     <div class="card-header">
-        <h5 class="mb-0">Financial Summary</h5>
+        <h5 class="mb-0" style="color: white">Financial Summary</h5>
     </div>
     <div class="card-body">
         <ul class="list-unstyled">
@@ -229,7 +229,7 @@
 
 <div class="card mt-3">
     <div class="card-header">
-        <h5 class="mb-0">Sustainability Summary</h5>
+        <h5 class="mb-0" style="color: white">Sustainability Summary</h5>
     </div>
     <div class="card-body">
         <ul class="list-unstyled">
@@ -248,7 +248,7 @@
 @if(auth()->user()->role && in_array(auth()->user()->role->name, ['admin', 'logistics']))
 <div class="card mt-3">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-boxes"></i> Inventory Summary</h5>
+        <h5 class="mb-0" style="color: white">Inventory Summary</h5>
     </div>
     <div class="card-body">
         @if($event->eventInventory->count() > 0)
@@ -279,7 +279,7 @@
 
 <div class="card mt-3">
     <div class="card-header">
-        <h5 class="mb-0">Checklist Summary</h5>
+        <h5 class="mb-0" style="color: white">Checklist Summary</h5>
     </div>
     <div class="card-body">
         @php
