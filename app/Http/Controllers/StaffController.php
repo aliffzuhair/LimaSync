@@ -82,7 +82,7 @@ class StaffController extends Controller
         ActivityLogger::create('Staff', $staff->id, Auth::user()->full_name . ' added staff: ' . $staff->full_name);
 
         return redirect()->route('staff.index')
-            ->with('success', 'Staff member added successfully!');
+            ->with('success', 'User added successfully!');
     }
 
     /**

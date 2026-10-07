@@ -188,8 +188,8 @@
                     @empty
                     <tr>
                         <td colspan="9" class="text-center">
-                            No staff members found. 
-                            <a href="{{ route('staff.create') }}">Add your first staff member</a>
+                            No user found. 
+                            <a href="{{ route('staff.create') }}">Add your first user</a>
                         </td>
                     </tr>
                     @endforelse

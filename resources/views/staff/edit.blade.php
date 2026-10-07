@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Staff - LimaSync')
+@section('title', 'Edit User - LimaSync')
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
