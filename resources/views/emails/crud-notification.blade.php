@@ -137,10 +137,6 @@
                     <div class="info-value">{{ $timestamp }}</div>
                 </div>
             </div>
-
-            <a href="{{ url('/') }}" class="btn">
-                Open LimaSync
-            </a>
         </div>
 
         <div class="footer">

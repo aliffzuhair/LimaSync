@@ -139,19 +139,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- Brand Footer -->
-        <div class="text-center mt-4">
-            <small class="text-muted"> 
-                LimaSync — Built for Lima Deria Sdn Bhd
-            </small>
-            <br>
-            <small class="text-muted">
-                <a href="https://limaderia.com" target="_blank" class="text-lime" style="text-decoration: none;">
-                    Spectacular Sustainable Events
-                </a>
-            </small>
-        </div>
     </div>
 </div>
 @endsection

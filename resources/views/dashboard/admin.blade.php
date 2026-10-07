@@ -46,42 +46,6 @@
     </div>
 </div>
 
-<!-- Today's Activity Summary -->
-<div class="row mt-3">
-    <div class="col-md-3">
-        <div class="card border-success mb-3">
-            <div class="card-body">
-                <h6 class="card-title text-success"><i class="fas fa-sign-in-alt"></i> Today's Logins</h6>
-                <h3 class="mb-0">{{ $todayLogins }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-secondary mb-3">
-            <div class="card-body">
-                <h6 class="card-title text-secondary"><i class="fas fa-sign-out-alt"></i> Today's Logouts</h6>
-                <h3 class="mb-0">{{ $todayLogouts }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-primary mb-3">
-            <div class="card-body">
-                <h6 class="card-title text-primary"><i class="fas fa-user-plus"></i> New Registrations</h6>
-                <h3 class="mb-0">{{ $todayRegistrations }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-info mb-3">
-            <div class="card-body">
-                <h6 class="card-title text-info"><i class="fas fa-plus-circle"></i> New Records</h6>
-                <h3 class="mb-0">{{ $todayCreations }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Quick Actions -->
 <div class="row mt-3">
     <div class="col-12">

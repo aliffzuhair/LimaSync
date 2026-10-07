@@ -15,14 +15,6 @@
 <!-- ✅ Summary Cards -->
 <div class="row mb-4">
     <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">Total Items</h5>
-                <h2 class="card-text">{{ $totalItems }}</h2>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
         <div class="card text-white bg-success">
             <div class="card-body">
                 <h5 class="card-title">Sufficient</h5>

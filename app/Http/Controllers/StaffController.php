@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogger;
+use App\Mail\WelcomeCredentials;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 
 class StaffController extends Controller
@@ -67,11 +69,14 @@ class StaffController extends Controller
             'email' => 'required|email|max:100|unique:users,email',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role_id' => 'required|exists:roles,id',
-            'client_id' => 'nullable|exists:clients,id',  // <-- ADD
+            'client_id' => 'nullable|exists:clients,id',
             'department' => 'nullable|string|max:50',
             'phone' => 'nullable|string|max:20',
             'is_active' => 'sometimes|boolean',
         ]);
+
+        // ✅ Save plain password BEFORE hashing
+        $plainPassword = $validated['password'];
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['name'] = $validated['full_name'];
@@ -79,10 +84,25 @@ class StaffController extends Controller
 
         $staff = User::create($validated);
 
-        ActivityLogger::create('Staff', $staff->id, Auth::user()->full_name . ' added staff: ' . $staff->full_name);
+        // Load role for email
+        $staff->load('role');
+
+        // ✅ Send welcome email with credentials
+        try {
+            Mail::to($staff->email)->send(new WelcomeCredentials($staff, $plainPassword));
+        } catch (\Exception $e) {
+            \Log::error('Welcome email failed: ' . $e->getMessage());
+        }
+
+        // Log activity
+        ActivityLogger::create(
+            'Staff',
+            $staff->id,
+            Auth::user()->full_name . ' added staff: ' . $staff->full_name
+        );
 
         return redirect()->route('staff.index')
-            ->with('success', 'User added successfully!');
+            ->with('success', 'Staff member added successfully! Welcome email sent to ' . $staff->email);
     }
 
     /**
