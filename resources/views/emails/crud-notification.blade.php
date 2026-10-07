@@ -100,7 +100,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌿 LimaSync</h1>
+            <h1>LimaSync</h1>
             <p>System Activity Notification</p>
         </div>
 

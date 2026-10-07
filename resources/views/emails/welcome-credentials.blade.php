@@ -119,7 +119,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌿 LimaSync</h1>
+            <h1>LimaSync</h1>
             <p>Welcome to Lima Deria's Event Management Portal</p>
         </div>
 
@@ -132,7 +132,7 @@
             </p>
 
             <div class="credentials-box">
-                <h3>🔑 Your Login Credentials</h3>
+                <h3>Your Login Credentials</h3>
 
                 <div class="credential-row">
                     <div class="credential-label">Login URL</div>

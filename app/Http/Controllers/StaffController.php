@@ -102,7 +102,7 @@ class StaffController extends Controller
         );
 
         return redirect()->route('staff.index')
-            ->with('success', 'Staff member added successfully! Welcome email sent to ' . $staff->email);
+            ->with('success', 'User added successfully! Welcome email sent to ' . $staff->email);
     }
 
     /**
@@ -176,7 +176,7 @@ class StaffController extends Controller
         ActivityLogger::update('Staff', $staff->id, Auth::user()->full_name . " {$status} staff: " . $staff->full_name);
 
         return redirect()->back()
-            ->with('success', "Staff member {$status} successfully!");
+            ->with('success', "User {$status} successfully!");
     }
 
     /**
