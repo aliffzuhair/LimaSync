@@ -7,7 +7,7 @@ Universiti Poly-Tech Malaysia (UPTM)
 
 ---
 
-## 👤 Student Information
+##  Student Information
 
 | Field | Details |
 | :--- | :--- |
@@ -19,7 +19,7 @@ Universiti Poly-Tech Malaysia (UPTM)
 
 ---
 
-## 📖 About LimaSync
+## About LimaSync
 
 LimaSync is a web-based integrated event management system designed specifically for **Lima Deria Sdn Bhd**, an ISO 20121 certified sustainable event agency based in Kuala Lumpur, Malaysia.
 
@@ -37,7 +37,7 @@ The system consolidates all core business operations into a single platform:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -53,9 +53,9 @@ The system consolidates all core business operations into a single platform:
 
 ---
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
-## 🔑 Login Credentials
+## Login Credentials
 
 The system uses **Role-Based Access Control (RBAC)**. Below are the test accounts for each role:
 
@@ -68,7 +68,7 @@ The system uses **Role-Based Access Control (RBAC)**. Below are the test account
 | Logistics | logistics@limasync.com | password123 | Manage Inventory, View Events |
 | Client View | client@limasync.com | password123 | View own Client Dashboard only |
 
-> ⚠️ **Note:** These are test accounts for development and FYP demonstration purposes only.
+> **Note:** These are test accounts for development and FYP demonstration purposes only.
 > In production, all passwords must be changed and public registration must remain disabled.
 
 ### Prerequisites
