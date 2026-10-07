@@ -135,7 +135,7 @@ class StaffController extends Controller
         ActivityLogger::update('Staff', $staff->id, Auth::user()->full_name . ' updated staff: ' . $staff->full_name);
 
         return redirect()->route('staff.index')
-            ->with('success', 'Staff member updated successfully!');
+            ->with('success', 'User updated successfully!');
     }
 
     /**
@@ -199,6 +199,6 @@ class StaffController extends Controller
         ActivityLogger::delete('Staff', $staffId, Auth::user()->full_name . ' deleted staff: ' . $staffName);
 
         return redirect()->route('staff.index')
-            ->with('success', 'Staff member deleted successfully!');
+            ->with('success', 'User deleted successfully!');
     }
 }
