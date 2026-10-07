@@ -4,73 +4,106 @@
 <div class="header">
     <div class="brand">LimaSync</div>
     <h1>{{ $title }}</h1>
-    <div class="subtitle">{{ $event->event_name }} - Sustainability Report</div>
+    <div class="subtitle">Sustainability Report</div>
 </div>
 
+{{-- Event Information --}}
 <div class="section">
     <h2>Event Information</h2>
-    <table>
-        <tr><th style="width: 30%;">Event Name</th><td>{{ $event->event_name }}</td></tr>
-        <tr><th>Client</th><td>{{ $event->client->company_name ?? 'N/A' }}</td></tr>
-        <tr><th>Date</th><td>{{ $event->start_date->format('d M Y') }} - {{ $event->end_date->format('d M Y') }}</td></tr>
-        <tr><th>Venue</th><td>{{ $event->venue ?? 'N/A' }}</td></tr>
+    <table class="info-table">
+        <tr>
+            <th>Event Name</th>
+            <td>{{ $event->event_name }}</td>
+            <th>Client</th>
+            <td>{{ $event->client->company_name ?? 'N/A' }}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td>{{ $event->start_date->format('d M Y') }} - {{ $event->end_date->format('d M Y') }}</td>
+            <th>Venue</th>
+            <td>{{ $event->venue ?? 'N/A' }}</td>
+        </tr>
     </table>
 </div>
 
+{{-- Sustainability Summary --}}
 <div class="section">
     <h2>Sustainability Summary</h2>
     <div class="summary-box">
-        <div class="summary-item">
-            <strong>Carbon Footprint:</strong>
-            <span class="value">{{ number_format($total_carbon, 2) }} kg CO₂</span>
-        </div>
-        <div class="summary-item">
-            <strong>Electricity Usage:</strong>
-            <span class="value">{{ number_format($total_electricity, 2) }} kWh</span>
-        </div>
-        <div class="summary-item">
-            <strong>Water Usage:</strong>
-            <span class="value">{{ number_format($total_water, 2) }} m³</span>
-        </div>
-        <div class="summary-item">
-            <strong>Waste Generated:</strong>
-            <span class="value">{{ number_format($total_waste, 2) }} kg</span>
-        </div>
+        <table class="summary-grid">
+            <tr>
+                <td>
+                    <div class="label">Carbon Footprint</div>
+                    <div class="value">{{ number_format($total_carbon, 2) }}</div>
+                    <div class="unit">kg CO₂</div>
+                </td>
+                <td>
+                    <div class="label">Electricity Usage</div>
+                    <div class="value">{{ number_format($total_electricity, 2) }}</div>
+                    <div class="unit">kWh</div>
+                </td>
+                <td>
+                    <div class="label">Water Usage</div>
+                    <div class="value">{{ number_format($total_water, 2) }}</div>
+                    <div class="unit">m³</div>
+                </td>
+                <td>
+                    <div class="label">Waste Generated</div>
+                    <div class="value">{{ number_format($total_waste, 2) }}</div>
+                    <div class="unit">kg</div>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 
+{{-- Detailed Metrics --}}
 <div class="section">
     <h2>Detailed Metrics</h2>
     <table>
         <thead>
             <tr>
-                <th>Type</th>
-                <th>Metric</th>
-                <th class="text-right">Value</th>
-                <th>Unit</th>
-                <th>Date</th>
-                <th>Status</th>
+                <th style="width: 5%;">#</th>
+                <th style="width: 15%;">Type</th>
+                <th style="width: 25%;">Metric</th>
+                <th style="width: 12%;" class="text-right">Value</th>
+                <th style="width: 10%;">Unit</th>
+                <th style="width: 13%;">Date</th>
+                <th style="width: 10%;">Source</th>
+                <th style="width: 10%;">Status</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($event->sustainability as $item)
+            @forelse($event->sustainability as $index => $item)
             <tr>
+                <td>{{ $index + 1 }}</td>
                 <td>
-                    <span class="badge badge-{{ $item->metric_type == 'carbon' ? 'dark' : ($item->metric_type == 'electricity' ? 'warning' : ($item->metric_type == 'water' ? 'info' : 'secondary')) }}">
+                    <span class="badge badge-{{ 
+                        $item->metric_type == 'carbon' ? 'dark' : 
+                        ($item->metric_type == 'electricity' ? 'warning' : 
+                        ($item->metric_type == 'water' ? 'info' : 'secondary')) 
+                    }}">
                         {{ ucfirst($item->metric_type) }}
                     </span>
                 </td>
                 <td>{{ $item->metric_name }}</td>
-                <td class="text-right">{{ number_format($item->value, 2) }}</td>
+                <td class="text-right">{{ number_format((float) $item->value, 2) }}</td>
                 <td>{{ $item->unit }}</td>
                 <td>{{ $item->measurement_date->format('d M Y') }}</td>
+                <td>{{ $item->source ?? '-' }}</td>
                 <td>
-                    <span class="badge badge-{{ $item->is_verified ? 'success' : 'warning' }}">
-                        {{ $item->is_verified ? 'Verified' : 'Pending' }}
-                    </span>
+                    @if($item->is_verified)
+                        <span class="badge badge-success">Verified</span>
+                    @else
+                        <span class="badge badge-warning">Pending</span>
+                    @endif
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="8" class="text-center text-muted">No sustainability data recorded.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
