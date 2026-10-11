@@ -10,10 +10,43 @@ use App\Helpers\ActivityLogger;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::with(['client', 'createdBy'])->latest()->paginate(10);
-        return view('events.index', compact('events'));
+        $query = Event::with(['client', 'createdBy']);
+
+        // ✅ Search by event name, client name, venue, or event type
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('event_name', 'like', "%{$search}%")
+                ->orWhere('event_type', 'like', "%{$search}%")
+                ->orWhere('venue', 'like', "%{$search}%")
+                ->orWhereHas('client', function ($c) use ($search) {
+                    $c->where('company_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // ✅ Filter by Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $events = $query->latest()->paginate(10)->appends($request->query());
+
+        // Summary counts
+        $totalEvents = Event::count();
+        $planningEvents = Event::where('status', 'planning')->count();
+        $inProgressEvents = Event::where('status', 'in_progress')->count();
+        $completedEvents = Event::where('status', 'completed')->count();
+
+        return view('events.index', compact(
+            'events',
+            'totalEvents',
+            'planningEvents',
+            'inProgressEvents',
+            'completedEvents'
+        ));
     }
 
     public function create()

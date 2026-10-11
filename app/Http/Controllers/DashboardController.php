@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\User;
+use App\Models\Client;
+use App\Models\Inventory;
+use App\Models\Finance;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -84,7 +90,27 @@ class DashboardController extends Controller
     public function operations()
     {
         $user = Auth::user();
-        return view('dashboard.operations', compact('user'));
+
+        // ✅ Count events assigned to this user (via checklist items)
+        // OR simply count all events the user has access to
+        $myEvents = Event::where('status', '!=', 'cancelled')->count();
+
+        $completedEvents = Event::where('status', 'completed')->count();
+        $inProgressEvents = Event::where('status', 'in_progress')->count();
+
+        // Recent events (clickable to checklists)
+        $recentEvents = Event::with('client')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('dashboard.operations', compact(
+            'user',
+            'myEvents',
+            'completedEvents',
+            'inProgressEvents',
+            'recentEvents'
+        ));
     }
 
     public function sales()
@@ -128,11 +154,14 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Inventory stats
-        $totalItems = \App\Models\Inventory::sum('quantity');
-        $lowStockCount = \App\Models\Inventory::whereRaw('quantity < min_quantity')->where('quantity', '>', 0)->count();
-        $outOfStockCount = \App\Models\Inventory::where('quantity', '<=', 0)->count();
-        $totalCategories = \App\Models\Inventory::distinct('category')->count('category');
+        // ✅ Use the same logic as the Inventory page (based on available_quantity)
+        $allItems = Inventory::where('is_active', true)->get();
+
+        $totalItems = $allItems->sum('quantity');
+        $lowStockCount = $allItems->filter(fn($i) => $i->stock_status === 'Low Stock')->count();
+        $outOfStockCount = $allItems->filter(fn($i) => $i->stock_status === 'Out of Stock')->count();
+        $sufficientCount = $allItems->filter(fn($i) => $i->stock_status === 'Sufficient')->count();
+        $totalCategories = Inventory::distinct('category')->count('category');
 
         // All events with inventory info
         $events = \App\Models\Event::with(['client', 'eventInventory.inventory'])
@@ -149,6 +178,7 @@ class DashboardController extends Controller
         return view('dashboard.logistics', compact(
             'user',
             'totalItems',
+            'sufficientCount',
             'lowStockCount',
             'outOfStockCount',
             'totalCategories',

@@ -15,7 +15,7 @@
         <div class="card text-white bg-info mb-3">
             <div class="card-body">
                 <h5 class="card-title">My Events</h5>
-                <h2 class="card-text">{{ \App\Models\Event::where('created_by', $user->id)->count() }}</h2>
+                <h2 class="card-text">{{ $myEvents }}</h2>
             </div>
         </div>
     </div>

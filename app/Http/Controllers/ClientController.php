@@ -9,12 +9,49 @@ use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::latest()->paginate(10);
-        return view('clients.index', compact('clients'));
-    }
+        $query = Client::query();
 
+        // ✅ Search by name, contact person, email, or phone
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('company_name', 'like', "%{$search}%")
+                  ->orWhere('contact_person', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // ✅ Filter by Industry
+        if ($request->filled('industry')) {
+            $query->where('industry', $request->industry);
+        }
+
+        // ✅ Filter by Status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+
+        $clients = $query->latest()->paginate(10)->appends($request->query());
+
+        // Get unique industries for filter dropdown
+        $industries = Client::distinct()->pluck('industry')->filter()->sort();
+
+        // Summary counts
+        $totalClients = Client::count();
+        $activeClients = Client::where('is_active', true)->count();
+        $inactiveClients = Client::where('is_active', false)->count();
+
+        return view('clients.index', compact(
+            'clients',
+            'industries',
+            'totalClients',
+            'activeClients',
+            'inactiveClients'
+        ));
+    }
     public function create()
     {
         return view('clients.create');
