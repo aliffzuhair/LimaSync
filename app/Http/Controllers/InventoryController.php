@@ -73,7 +73,10 @@ class InventoryController extends Controller
 
     public function create()
     {
-        return view('inventory.create');
+        // Get all unique categories
+        $categories = Inventory::distinct()->pluck('category')->filter()->sort();
+
+        return view('inventory.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -81,6 +84,7 @@ class InventoryController extends Controller
         $validated = $request->validate([
             'item_name' => 'required|string|max:100',
             'category' => 'required|string|max:50',
+            'new_category' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'quantity' => 'required|integer|min:0',
             'min_quantity' => 'required|integer|min:0',
@@ -91,11 +95,21 @@ class InventoryController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        // If admin selected "+ Add New Category", use the new_category value
+        if ($validated['category'] === '__new__') {
+            if (empty($validated['new_category'])) {
+                return redirect()->back()
+                    ->withErrors(['new_category' => 'Please enter the new category name.'])
+                    ->withInput();
+            }
+            $validated['category'] = trim($validated['new_category']);
+        }
+
+        unset($validated['new_category']);
         $validated['is_active'] = true;
 
         $inventory = Inventory::create($validated);
 
-        // ✅ Log activity
         ActivityLogger::create(
             'Inventory',
             $inventory->id,
@@ -114,7 +128,9 @@ class InventoryController extends Controller
 
     public function edit(Inventory $inventory)
     {
-        return view('inventory.edit', compact('inventory'));
+        $categories = Inventory::distinct()->pluck('category')->filter()->sort();
+
+        return view('inventory.edit', compact('inventory', 'categories'));
     }
 
     public function update(Request $request, Inventory $inventory)
@@ -122,6 +138,7 @@ class InventoryController extends Controller
         $validated = $request->validate([
             'item_name' => 'required|string|max:100',
             'category' => 'required|string|max:50',
+            'new_category' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'quantity' => 'required|integer|min:0',
             'min_quantity' => 'required|integer|min:0',
@@ -133,9 +150,20 @@ class InventoryController extends Controller
             'is_active' => 'sometimes|boolean',
         ]);
 
+        // Handle new category
+        if ($validated['category'] === '__new__') {
+            if (empty($validated['new_category'])) {
+                return redirect()->back()
+                    ->withErrors(['new_category' => 'Please enter the new category name.'])
+                    ->withInput();
+            }
+            $validated['category'] = trim($validated['new_category']);
+        }
+
+        unset($validated['new_category']);
+
         $inventory->update($validated);
 
-        // ✅ Log activity
         ActivityLogger::update(
             'Inventory',
             $inventory->id,
@@ -144,7 +172,7 @@ class InventoryController extends Controller
 
         return redirect()->route('inventory.index')
             ->with('success', 'Inventory item updated successfully!');
-}
+    }
 
     public function destroy(Inventory $inventory)
     {

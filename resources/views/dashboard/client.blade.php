@@ -64,7 +64,7 @@
                             </thead>
                             <tbody>
                                 @foreach($allEvents as $event)
-                                <tr onclick="window.location='{{ route('client.reports.index', $event) }}'">
+                                <tr onclick="window.location='{{ route('client.events.show', $event) }}'">
                                     <td>
                                         <strong>{{ $event->event_name }}</strong>
                                     </td>

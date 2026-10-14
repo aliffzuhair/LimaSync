@@ -144,4 +144,51 @@ class ClientDashboardController extends Controller
             'progress' => $progress,
         ];
     }
+    public function showEvent(Event $event)
+    {
+        $user = Auth::user();
+
+        // ✅ SECURITY: Client can only view their own events
+        if ($user->client_id && $event->client_id !== $user->client_id) {
+            abort(403, 'You do not have access to this event.');
+        }
+
+        // Load relationships
+        $event->load([
+            'client',
+            'eventChecklists.checklist.phase',
+            'sustainability',
+            'reports',
+        ]);
+
+        // Checklist summary
+        $checklistSummary = $event->getChecklistSummary();
+
+        // Phase progress
+        $phaseProgress = [
+            'pre_event' => $event->getPhaseProgress('pre_event'),
+            'during_event' => $event->getPhaseProgress('during_event'),
+            'post_event' => $event->getPhaseProgress('post_event'),
+        ];
+
+        // Sustainability summary (verified only)
+        $sustainabilitySummary = [
+            'carbon' => $event->sustainability()->where('metric_type', 'carbon')->where('is_verified', true)->sum('value'),
+            'electricity' => $event->sustainability()->where('metric_type', 'electricity')->where('is_verified', true)->sum('value'),
+            'water' => $event->sustainability()->where('metric_type', 'water')->where('is_verified', true)->sum('value'),
+            'waste' => $event->sustainability()->where('metric_type', 'waste')->where('is_verified', true)->sum('value'),
+        ];
+
+        // Available reports (only reports for this event)
+        $reports = $event->reports()->with('generatedBy')->latest()->get();
+
+        return view('dashboard.client-event-show', compact(
+            'user',
+            'event',
+            'checklistSummary',
+            'phaseProgress',
+            'sustainabilitySummary',
+            'reports'
+        ));
+    }
 }

@@ -159,28 +159,28 @@
 
             {{-- Sustainability: Admin + Operations --}}
             @if(auth()->user()->role && in_array(auth()->user()->role->name, ['admin', 'operations']))
-                <a href="{{ route('sustainability.index', $event) }}" class="btn btn-outline-info">
+                <a href="{{ route('sustainability.index', $event) }}" class="btn btn-outline-primary">
                     <i class="fas fa-leaf"></i> Sustainability
                 </a>
             @endif
 
             {{-- Finance: Admin + Finance --}}
             @if(auth()->user()->role && in_array(auth()->user()->role->name, ['admin', 'finance']))
-                <a href="{{ route('finance.event', $event) }}" class="btn btn-outline-warning">
+                <a href="{{ route('finance.event', $event) }}" class="btn btn-outline-primary">
                     <i class="fas fa-money-bill-wave"></i> Manage Finance
                 </a>
             @endif
 
             {{-- Inventory: Admin + Logistics --}}
             @if(auth()->user()->role && in_array(auth()->user()->role->name, ['admin', 'logistics']))
-                <a href="{{ route('event.inventory.index', $event) }}" class="btn btn-outline-success">
+                <a href="{{ route('event.inventory.index', $event) }}" class="btn btn-outline-primary">
                     <i class="fas fa-boxes"></i> Manage Inventory
                 </a>
             @endif
 
             {{-- Reports: Admin + Operations --}}
             @if(auth()->user()->role && in_array(auth()->user()->role->name, ['admin', 'operations']))
-                <a href="{{ route('reports.index', $event) }}" class="btn btn-outline-danger">
+                <a href="{{ route('reports.index', $event) }}" class="btn btn-outline-primary">
                     <i class="fas fa-file-alt"></i> Reports
                 </a>
             @endif
@@ -189,20 +189,73 @@
 </div>
 
 
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="mb-0" style="color: white">Event Summary</h5>
-            </div>
-            <div class="card-body">
-                <ul class="list-unstyled">
-                    <li><strong>Phase:</strong> Pre-Event</li>
-                    <li><strong>Checklist Items:</strong> 0 / 7</li>
-                    <li><strong>Total Income:</strong> RM 0.00</li>
-                    <li><strong>Total Expenses:</strong> RM 0.00</li>
-                    <li><strong>Net Profit:</strong> RM 0.00</li>
-                </ul>
-            </div>
-        </div>
+        {{-- Event Summary --}}
+<div class="card mt-3">
+    <div class="card-header">
+        <h5 class="mb-0" style="color: white"> Event Summary</h5>
+    </div>
+    <div class="card-body">
+        @php
+            $summary = $event->getChecklistSummary();
+            $totalIncome = $event->total_income;
+            $totalExpense = $event->total_expense;
+            $netProfit = $event->net_profit;
+        @endphp
+
+        <ul class="list-unstyled mb-0">
+            {{-- Phase --}}
+            <li class="mb-2">
+                <strong>Phase:</strong>
+                @php
+                    $preProgress = $event->getPhaseProgress('pre_event');
+                    $duringProgress = $event->getPhaseProgress('during_event');
+                    $postProgress = $event->getPhaseProgress('post_event');
+                @endphp
+
+                @if($preProgress['percentage'] < 100)
+                    <span class="badge bg-secondary">Pre-Event</span>
+                @elseif($duringProgress['percentage'] < 100)
+                    <span class="badge bg-warning text-dark">During-Event</span>
+                @elseif($postProgress['percentage'] < 100)
+                    <span class="badge bg-info">Post-Event</span>
+                @else
+                    <span class="badge bg-success">Completed</span>
+                @endif
+            </li>
+
+            {{-- Checklist Items --}}
+            <li class="mb-2">
+                <strong>Checklist Items:</strong>
+                <span class="float-end">
+                    {{ $summary['completed'] }} / {{ $summary['total'] }}
+                    <small class="text-muted">({{ $summary['percentage'] }}%)</small>
+                </span>
+            </li>
+
+            {{-- Total Income --}}
+            <li class="mb-2">
+                <strong>Total Income:</strong>
+                <span class="float-end text-success">
+                    RM {{ number_format($totalIncome, 2) }}
+                </span>
+            </li>
+
+            {{-- Total Expenses --}}
+            <li class="mb-2">
+                <strong>Total Expenses:</strong>
+                <span class="float-end text-danger">
+                    RM {{ number_format($totalExpense, 2) }}
+                </span>
+            </li>
+
+            {{-- Net Profit --}}
+            <li class="mb-0">
+                <strong>Net Profit:</strong>
+                <span class="float-end {{ $netProfit >= 0 ? 'text-success' : 'text-danger' }} fw-bold">
+                    RM {{ number_format($netProfit, 2) }}
+                </span>
+            </li>
+        </ul>
     </div>
 </div>
 

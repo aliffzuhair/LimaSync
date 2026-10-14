@@ -27,10 +27,34 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control @error('category') is-invalid @enderror" 
-                           id="category" name="category" value="{{ old('category', $inventory->category) }}" required>
-                    @error('category')
+    <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+    <select class="form-control @error('category') is-invalid @enderror" 
+            id="category" name="category" required>
+        <option value="">Select Category</option>
+        @foreach($categories as $category)
+            <option value="{{ $category }}" 
+                    {{ old('category', $inventory->category) == $category ? 'selected' : '' }}>
+                {{ $category }}
+            </option>
+        @endforeach
+        <option value="__new__" {{ old('category') == '__new__' ? 'selected' : '' }}>
+            + Add New Category
+        </option>
+    </select>
+    @error('category')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+
+                {{-- New Category Input --}}
+                <div class="col-md-6 mb-3" id="new-category-wrapper" style="display: none;">
+                    <label for="new_category" class="form-label">New Category Name <span class="text-danger">*</span></label>
+                    <input type="text" 
+                        class="form-control @error('new_category') is-invalid @enderror" 
+                        id="new_category" 
+                        name="new_category" 
+                        value="{{ old('new_category') }}">
+                    @error('new_category')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -115,4 +139,30 @@
         </form>
     </div>
 </div>
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('category');
+            const newCategoryWrapper = document.getElementById('new-category-wrapper');
+            const newCategoryInput = document.getElementById('new_category');
+
+            categorySelect.addEventListener('change', function() {
+                if (this.value === '__new__') {
+                    newCategoryWrapper.style.display = 'block';
+                    newCategoryInput.required = true;
+                    newCategoryInput.focus();
+                } else {
+                    newCategoryWrapper.style.display = 'none';
+                    newCategoryInput.required = false;
+                    newCategoryInput.value = '';
+                }
+            });
+
+            if (categorySelect.value === '__new__') {
+                newCategoryWrapper.style.display = 'block';
+                newCategoryInput.required = true;
+            }
+        });
+    </script>
+    @endpush
 @endsection

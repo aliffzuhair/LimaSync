@@ -35,6 +35,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Client Dashboard (Client View Only)
     Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
+    // Client Event Detail (own events only)
+    Route::get('/client/events/{event}', [ClientDashboardController::class, 'showEvent'])
+    ->name('client.events.show');
 });
 
 // ==========================================

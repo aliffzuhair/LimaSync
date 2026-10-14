@@ -21,20 +21,13 @@
     </div>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
-
 <!-- Summary Cards -->
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card text-white bg-dark">
             <div class="card-body">
                 <h5 class="card-title"><i class="fas fa-leaf"></i> Carbon</h5>
-                <h2 class="card-text">{{ number_format($summary['carbon'], 2) }}</h2>
+                <h2 class="card-text" style="color: white">{{ number_format($summary['carbon'], 2) }}</h2>
                 <small>kg CO₂</small>
             </div>
         </div>
