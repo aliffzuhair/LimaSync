@@ -517,12 +517,12 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}">
-                            <i class="fas fa-home" style="color: #3A3F4A"></i> Dashboard
-                        </a>
-                    </li>
                     @auth
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('dashboard') }}">
+                                <i class="fas fa-home" style="color: #3A3F4A"></i> Dashboard
+                            </a>
+                        </li>
                         {{-- Clients: Admin + Operations + Sales --}}
                         @if(auth()->user()->role && in_array(auth()->user()->role->name, ['admin', 'operations', 'sales']))
                         <li class="nav-item">
