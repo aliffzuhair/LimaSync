@@ -87,14 +87,25 @@ class Event extends Model
      */
     public function calculateProgress()
     {
-        $total = $this->eventChecklists()->where('status', '!=', 'not_applicable')->count();
-        
+        // Only count required items that are not "not_applicable"
+        $total = $this->eventChecklists()
+            ->whereHas('checklist', function ($q) {
+                $q->where('is_required', true);
+            })
+            ->where('status', '!=', 'not_applicable')
+            ->count();
+
         if ($total === 0) {
             return 0;
         }
-        
-        $completed = $this->eventChecklists()->where('status', 'completed')->count();
-        
+
+        $completed = $this->eventChecklists()
+            ->whereHas('checklist', function ($q) {
+                $q->where('is_required', true);
+            })
+            ->where('status', 'completed')
+            ->count();
+
         return round(($completed / $total) * 100);
     }
 
@@ -120,18 +131,29 @@ class Event extends Model
      */
     public function getChecklistSummary()
     {
-        $total = $this->eventChecklists()->count();
-        $completed = $this->eventChecklists()->where('status', 'completed')->count();
-        $inProgress = $this->eventChecklists()->where('status', 'in_progress')->count();
-        $pending = $this->eventChecklists()->where('status', 'pending')->count();
-        $notApplicable = $this->eventChecklists()->where('status', 'not_applicable')->count();
+        $requiredItems = $this->eventChecklists()
+            ->whereHas('checklist', function ($q) {
+                $q->where('is_required', true);
+            })
+            ->where('status', '!=', 'not_applicable');
+
+        $total = (clone $requiredItems)->count();
+        $completed = (clone $requiredItems)->where('status', 'completed')->count();
+        $inProgress = (clone $requiredItems)->where('status', 'in_progress')->count();
+        $pending = (clone $requiredItems)->where('status', 'pending')->count();
+
+        // Optional items (for optional badge count display)
+        $optionalTotal = $this->eventChecklists()
+            ->whereHas('checklist', function ($q) {
+                $q->where('is_required', false);
+            })->count();
 
         return [
             'total' => $total,
             'completed' => $completed,
             'in_progress' => $inProgress,
             'pending' => $pending,
-            'not_applicable' => $notApplicable,
+            'optional_total' => $optionalTotal,
             'percentage' => $this->calculateProgress(),
         ];
     }
@@ -363,19 +385,21 @@ class Event extends Model
      */
     public function isPhaseCompleted($phaseName)
     {
-        $phaseItems = $this->eventChecklists()
+        $requiredItems = $this->eventChecklists()
             ->whereHas('checklist.phase', function ($q) use ($phaseName) {
                 $q->where('name', $phaseName);
+            })
+            ->whereHas('checklist', function ($q) {
+                $q->where('is_required', true);
             })
             ->where('status', '!=', 'not_applicable')
             ->get();
 
-        if ($phaseItems->isEmpty()) {
+        if ($requiredItems->isEmpty()) {
             return false;
         }
 
-        // Every applicable item must be 'completed'
-        return $phaseItems->every(function ($item) {
+        return $requiredItems->every(function ($item) {
             return $item->status === 'completed';
         });
     }
@@ -388,6 +412,9 @@ class Event extends Model
         $items = $this->eventChecklists()
             ->whereHas('checklist.phase', function ($q) use ($phaseName) {
                 $q->where('name', $phaseName);
+            })
+            ->whereHas('checklist', function ($q) {
+                $q->where('is_required', true);   // ✅ Only required items
             })
             ->get();
 

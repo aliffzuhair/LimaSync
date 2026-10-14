@@ -164,12 +164,12 @@
     </div>
 </div>
 
-{{-- Checklist Progress (Read-Only) --}}
-<div class="card mb-4">
+    {{-- Checklist Progress (Read-Only) --}}
+    <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-clipboard-check"></i> Checklist Progress</h5>
-        <small class="text-muted">
-            <i class="fas fa-lock"></i> View-only
+        <h5 class="mb-0" style="color: white">Checklist Progress</h5>
+        <small class="mb-0" style="color: white">
+            View-only
         </small>
     </div>
     <div class="card-body">
