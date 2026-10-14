@@ -164,6 +164,121 @@
     </div>
 </div>
 
+{{-- Checklist Progress (Read-Only) --}}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-clipboard-check"></i> Checklist Progress</h5>
+        <small class="text-muted">
+            <i class="fas fa-lock"></i> View-only
+        </small>
+    </div>
+    <div class="card-body">
+        @forelse($checklistsByPhase as $phaseName => $items)
+            @php
+                $completedCount = $items->where('status', 'completed')->count();
+                $totalCount = $items->where('status', '!=', 'not_applicable')->count();
+                $phasePercent = $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0;
+            @endphp
+
+            <div class="mb-4">
+                {{-- Phase Header --}}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h6 class="mb-0">
+                            <i class="fas fa-{{
+                                $phaseName == 'pre_event' ? 'clipboard-list' :
+                                ($phaseName == 'during_event' ? 'play' : 'flag-checkered')
+                            }}"></i>
+                            {{ ucfirst(str_replace('_', ' ', $phaseName)) }}
+                        </h6>
+                        <small class="text-muted">
+                            {{ $completedCount }} of {{ $totalCount }} items completed
+                        </small>
+                    </div>
+                    <div>
+                        <span class="badge bg-{{
+                            $phasePercent == 100 ? 'success' :
+                            ($phasePercent >= 50 ? 'warning' : 'secondary')
+                        }}">
+                            {{ $phasePercent }}%
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Phase Progress Bar --}}
+                <div class="progress mb-3" style="height: 8px;">
+                    <div class="progress-bar bg-{{
+                        $phasePercent == 100 ? 'success' : 'info'
+                    }}"
+                         role="progressbar"
+                         style="width: {{ $phasePercent }}%"></div>
+                </div>
+
+                {{-- Checklist Table --}}
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 35%;">Task</th>
+                                <th style="width: 35%;">Description</th>
+                                <th style="width: 12%;">Status</th>
+                                <th style="width: 13%;">Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($items as $index => $item)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>
+                                    <strong>{{ $item->checklist->item_name ?? 'N/A' }}</strong>
+                                    @if(!$item->checklist->is_required)
+                                        <span class="badge bg-light text-muted ms-1" style="font-size: 0.65rem;">Optional</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ $item->checklist->description ?? 'N/A' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{
+                                        $item->status == 'completed' ? 'success' :
+                                        ($item->status == 'in_progress' ? 'warning' :
+                                        ($item->status == 'not_applicable' ? 'secondary' : 'light text-dark'))
+                                    }}">
+                                        {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($item->completed_at && $item->completedBy)
+                                        <small class="text-muted">
+                                            <i class="fas fa-check-circle text-success"></i>
+                                            {{ $item->completed_at->format('d M Y') }}
+                                        </small>
+                                    @else
+                                        <small class="text-muted">—</small>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if(!$loop->last)
+                <hr class="my-3">
+            @endif
+        @empty
+            <div class="text-center py-4">
+                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                <p class="text-muted mb-0">No checklist items yet.</p>
+            </div>
+        @endforelse
+    </div>
+</div>
+
 {{-- Sustainability Metrics --}}
 <div class="card mb-4">
     <div class="card-header">

@@ -157,9 +157,19 @@ class ClientDashboardController extends Controller
         $event->load([
             'client',
             'eventChecklists.checklist.phase',
+            'eventChecklists.completedBy',
             'sustainability',
             'reports',
         ]);
+
+        // ✅ Group checklists by phase for display
+        $checklistsByPhase = $event->eventChecklists
+            ->sortBy(function ($item) {
+                return $item->checklist->phase->sort_order ?? 0;
+            })
+            ->groupBy(function ($item) {
+                return $item->checklist->phase->name ?? 'unknown';
+            });
 
         // Checklist summary
         $checklistSummary = $event->getChecklistSummary();
@@ -179,12 +189,13 @@ class ClientDashboardController extends Controller
             'waste' => $event->sustainability()->where('metric_type', 'waste')->where('is_verified', true)->sum('value'),
         ];
 
-        // Available reports (only reports for this event)
+        // Available reports
         $reports = $event->reports()->with('generatedBy')->latest()->get();
 
         return view('dashboard.client-event-show', compact(
             'user',
             'event',
+            'checklistsByPhase',
             'checklistSummary',
             'phaseProgress',
             'sustainabilitySummary',
